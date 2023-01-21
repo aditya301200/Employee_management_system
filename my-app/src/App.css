@@ -7,6 +7,7 @@ h1{
     flex-direction: row;
     justify-content: space-between;
 }
-.fullWidth{
-    margin-bottom: 20px;
+
+.textField{
+    color: aliceblue !important;
 }
