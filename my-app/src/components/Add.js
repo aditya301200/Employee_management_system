@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -7,14 +7,47 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import '../App.css'
 import SaveIcon from "@mui/icons-material/Save";
 import Button from "@mui/material/Button";
+import Swal from "sweetalert2";
 
 const Add = ({employees, setEmployees, setIsAdding}) => {
 
-  const [value, setValue] = useState(null);
 
-  const handleAdd = () => {
-    //TODO
+  const textInput = useRef(null);
+
+  useEffect(()=> {
+    textInput.current.focus();
+  },[])
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [salary, setSalary] = useState("");
+  const [date, setDate] = useState('');
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+
+    const id = employees.length + 1;
+    const newEmployee = {
+      id,
+      firstName,
+      lastName,
+      email,
+      salary,
+      date
+    }
+    employees.push(newEmployee);
+    setEmployees(employees);
+    setIsAdding(false)
+
+    Swal.fire({
+      icon: "success",
+      title: "Added!",
+      text: `${firstName} ${lastName}'s data has been Added`,
+      timer: 1500,
+     });
   }
+
 
 
   return (
@@ -39,6 +72,7 @@ const Add = ({employees, setEmployees, setIsAdding}) => {
         >
           <TextField
             fullWidth
+            required
             label="First Name"
             className="fullWidth"
             InputLabelProps={{ className: "textField" }}
@@ -49,9 +83,13 @@ const Add = ({employees, setEmployees, setIsAdding}) => {
                 "& > fieldset": { borderColor: "white" },
               },
             }}
+            ref={textInput}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
           />
           <TextField
             fullWidth
+            required
             label="Last Name"
             className="fullWidth"
             type="text"
@@ -63,9 +101,12 @@ const Add = ({employees, setEmployees, setIsAdding}) => {
                 "& > fieldset": { borderColor: "white" },
               },
             }}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
           />
           <TextField
             fullWidth
+            required
             label="Email"
             className="fullWidth"
             type="email"
@@ -77,9 +118,12 @@ const Add = ({employees, setEmployees, setIsAdding}) => {
                 "& > fieldset": { borderColor: "white" },
               },
             }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             fullWidth
+            required
             label="Salary"
             className="fullWidth"
             type="number"
@@ -91,16 +135,22 @@ const Add = ({employees, setEmployees, setIsAdding}) => {
                 "& > fieldset": { borderColor: "white" },
               },
             }}
+            value={salary}
+            onChange={(e) => setSalary(e.target.value)}
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Date"
-              value={value}
+              openTo='day'
+              inputFormat="DD/MM/YYYY"
+              views={["day", "month", "year"]}
+              value={date}
               onChange={(newValue) => {
-                setValue(newValue);
+                setDate(newValue);
               }}
               renderInput={(params) => (
                 <TextField
+                  required
                   {...params}
                   InputLabelProps={{ className: "textField" }}
                   sx={{
@@ -120,6 +170,7 @@ const Add = ({employees, setEmployees, setIsAdding}) => {
             variant="contained"
             color="success"
             style={{ marginBlock: "20px" }}
+            type="submit"
           >
             <SaveIcon />
             Add Employee
